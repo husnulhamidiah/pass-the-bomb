@@ -1,3 +1,4 @@
+import {} from 'dotenv/config'
 import http from 'http'
 import socket from 'socket.io'
 
@@ -11,6 +12,8 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(3000, () => {
-  console.log('server running on port 3000')
+const port = process.env.PORT
+
+server.listen(port, () => {
+  console.log(`server running on port ${port}`)
 })

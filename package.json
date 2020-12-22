@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/husnulhamidiah/pass-the-bomb#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "socket.io": "^3.0.4"
   },
