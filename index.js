@@ -7,6 +7,11 @@ import socket from 'socket.io'
 import handler from './handler'
 import * as config from './config'
 
+// // ** testing
+// const s = {}
+// handler.handleCreateGame(s, {})
+// handler.handleJoinGame(s, { roomid: 'AE8TBII7' })
+
 const app = express()
 const server = http.createServer(app)
 

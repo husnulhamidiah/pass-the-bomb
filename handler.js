@@ -1,17 +1,46 @@
+import nanoid from 'nanoid'
 import store from './store'
+import memory from './memory'
+
+const genid = nanoid.customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
 
 export default {
   handleCreateGame: (socket, data) => {
-    const id = '1234' // TODO: generate unique easy id
-    store.setRoom(id, {
+    // const { } = data
+
+    // generate things
+    const id = genid()
+    const room = {
       id: id,
       players: [],
       rounds: []
-    })
+    }
+
+    // add current socket as player
+    const player = { id: genid(), isAdmin: true }
+    memory.sockets[player.id] = socket
+    room.players.push(player)
+
+    // update room
+    store.setRoom(id, room)
   },
 
   handleJoinGame: (socket, data) => {
-    // TODO: update room, add player id and socket reference to room
+    const { roomid } = data
+
+    // find room
+    const room = store.getRoom(roomid)
+    if (!room) {
+      return
+    }
+
+    // add current socket as player
+    const player = { id: genid() }
+    memory.sockets[player.id] = socket
+    room.players.push(player)
+
+    // update room
+    store.setRoom(room.id, room)
   },
 
   handleStartGame: (socket, data) => {
@@ -19,7 +48,6 @@ export default {
     // TODO: generate rounds
     // TODO: set round cursor
     // TODO: set player cursor
-
   },
 
   handleTapBomb: (socket, data) => {
