@@ -4,6 +4,9 @@ import path from 'path'
 import express from 'express'
 import socket from 'socket.io'
 
+import handler from './handler'
+import event from './event'
+
 const app = express()
 const server = http.createServer(app)
 
@@ -13,9 +16,9 @@ app.get('/dev/panel/', (req, res) => res.sendFile(path.join(__dirname, 'dev/test
 // setup socket server
 const io = socket(server)
 io.on('connection', socket => {
-  socket.on('ping', () => socket.emit('ping', 'pong'))
-
-  socket.emit('welcome', 'welcome')
+  socket.on(event.CLIENT_CREATE_GAME, data => handler.handleCreateGame(socket, data))
+  socket.on(event.CLIENT_JOIN_GAME, data => handler.handleJoinGame(socket, data))
+  socket.on(event.CLIENT_START_GAME, data => handler.handleStartGame(socket, data))
 })
 
 // start server
