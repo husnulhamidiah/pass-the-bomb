@@ -3,7 +3,7 @@ import * as config from './config'
 import store from './store'
 import memory from './memory'
 
-const genid = nanoid.customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8)
+const genid = nanoid.customAlphabet('ABCEFGHJKLMNOPQRSTUWXYZ', 8)
 
 export default {
   handleCreateGame: (socket, data) => {
