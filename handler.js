@@ -124,6 +124,12 @@ export default {
     // decrement current round's tapleft
     room.rounds[room.curround].tapleft -= 1
 
+    // handle when tapleft reach zero
+    let exploded = false
+    if (room.rounds[room.curround].tapleft <= 0) {
+      exploded = true
+    }
+
     // update room
     store.setRoom(room.id, room)
 
@@ -131,6 +137,12 @@ export default {
     room.players
       .map(p => memory.sockets[p.id])
       .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_TAP, {}))
+
+    if (exploded) {
+      room.players
+        .map(p => memory.sockets[p.id])
+        .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_END, {})) // TODO: send score update
+    }
   },
 
   handlePassBomb: (socket, data) => {
