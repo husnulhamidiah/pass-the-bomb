@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r esm index.js",
+    "start:panel": "serve testpanel",
     "dev": "npx nodemon --exec 'node -r esm index.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
