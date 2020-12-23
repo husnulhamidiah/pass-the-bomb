@@ -1,0 +1,5 @@
+export const EVENT_CLIENT_CREATE_GAME = 'client-create-game'
+export const EVENT_CLIENT_JOIN_GAME = 'client-join-game'
+export const EVENT_CLIENT_START_GAME = 'client-start-game'
+export const EVENT_CLIENT_GAME_TAP_BOMB = 'client-game-tap-bomb'
+export const EVENT_CLIENT_GAME_PASS_BOMB = 'client-game-pass-bomb'

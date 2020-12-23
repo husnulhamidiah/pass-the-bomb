@@ -5,7 +5,7 @@ import express from 'express'
 import socket from 'socket.io'
 
 import handler from './handler'
-import event from './event'
+import * as config from './config'
 
 const app = express()
 const server = http.createServer(app)
@@ -18,12 +18,12 @@ const io = socket(server)
 io.on('connection', socket => {
   socket.on('ping', (data) => socket.emit('pong', data))
 
-  socket.on(event.CLIENT_CREATE_GAME, data => handler.handleCreateGame(socket, data))
-  socket.on(event.CLIENT_JOIN_GAME, data => handler.handleJoinGame(socket, data))
-  socket.on(event.CLIENT_START_GAME, data => handler.handleStartGame(socket, data))
+  socket.on(config.EVENT_CLIENT_CREATE_GAME, data => handler.handleCreateGame(socket, data))
+  socket.on(config.EVENT_CLIENT_JOIN_GAME, data => handler.handleJoinGame(socket, data))
+  socket.on(config.EVENT_CLIENT_START_GAME, data => handler.handleStartGame(socket, data))
 
-  socket.on(event.CLIENT_GAME_TAP_BOMB, data => handler.handleTapBomb(socket, data))
-  socket.on(event.CLIENT_GAME_PASS_BOMB, data => handler.handlePassBomb(socket, data))
+  socket.on(config.EVENT_CLIENT_GAME_TAP_BOMB, data => handler.handleTapBomb(socket, data))
+  socket.on(config.EVENT_CLIENT_GAME_PASS_BOMB, data => handler.handlePassBomb(socket, data))
 })
 
 // start server
