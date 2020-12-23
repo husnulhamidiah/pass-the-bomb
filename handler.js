@@ -134,7 +134,42 @@ export default {
   },
 
   handlePassBomb: (socket, data) => {
-    // TODO: set cursor to next player
+    const { playerid, roomid } = data
+
+    // confirm socket
+    if (socket !== memory.sockets[playerid]) {
+      return
+    }
+
+    // find room
+    const room = store.getRoom(roomid)
+    if (!room) {
+      return
+    }
+
+    // confirm player is in room
+    const pid = room.players.findIndex(e => e.id === playerid)
+    if (pid === -1) {
+      return
+    }
+
+    // confirm its player turns
+    if (room.curplayer !== pid) {
+      return
+    }
+
+    // set cursor to next player
+    room.curplayer = (room.curplayer + 1) % room.players.length
+    const nextplayer = room.players[room.curplayer]
+
+    // update room
+    store.setRoom(room.id, room)
+
+    // send response evt
+    room.players
+      .map(p => memory.sockets[p.id])
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_PASS, {}))
+    memory.sockets[nextplayer.id].emit(config.EVENT_DOWN_GAME_TURN_START, {})
   }
 
 }
