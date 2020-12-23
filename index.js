@@ -32,23 +32,23 @@ server.listen(port, () => {
   console.log(`server running on port ${port}`)
 })
 
-// testing hehe
-// ** testing
-const evts = []
-const s = {
-  emit: (key, data) => {
-    console.log('event emitted:', evts.length, key, JSON.stringify(data))
-    evts.push({ key, data })
-  }
-}
+// // testing hehe
+// // ** testing
+// const evts = []
+// const s = {
+//   emit: (key, data) => {
+//     console.log('event emitted:', evts.length, key, JSON.stringify(data))
+//     evts.push({ key, data })
+//   }
+// }
 
-handler.handleCreateGame(s, {})
-handler.handleJoinGame(s, { roomid: evts[0].data.roomid })
-handler.handleStartGame(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
-handler.handlePassBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleCreateGame(s, {})
+// handler.handleJoinGame(s, { roomid: evts[0].data.roomid })
+// handler.handleStartGame(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+// handler.handlePassBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
