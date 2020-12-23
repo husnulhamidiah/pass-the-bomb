@@ -45,3 +45,4 @@ const s = {
 handler.handleCreateGame(s, {})
 handler.handleJoinGame(s, { roomid: evts[0].data.roomid })
 handler.handleStartGame(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })
+handler.handleTapBomb(s, { roomid: evts[0].data.roomid, playerid: evts[0].data.player.id })

@@ -82,6 +82,9 @@ export default {
     room.curround = 0
     room.curplayer = 0
 
+    // update room
+    store.setRoom(room.id, room)
+
     // send response evt
     room.players
       .map(p => memory.sockets[p.id])
@@ -94,8 +97,40 @@ export default {
   },
 
   handleTapBomb: (socket, data) => {
-    // TODO: decrement current round's hitnumber
+    const { playerid, roomid } = data
 
+    // confirm socket
+    if (socket !== memory.sockets[playerid]) {
+      return
+    }
+
+    // find room
+    const room = store.getRoom(roomid)
+    if (!room) {
+      return
+    }
+
+    // confirm player is in room
+    const pid = room.players.findIndex(e => e.id === playerid)
+    if (pid === -1) {
+      return
+    }
+
+    // confirm its player turns
+    if (room.curplayer !== pid) {
+      return
+    }
+
+    // decrement current round's tapleft
+    room.rounds[room.curround].tapleft -= 1
+
+    // update room
+    store.setRoom(room.id, room)
+
+    // send response evt
+    room.players
+      .map(p => memory.sockets[p.id])
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_TAP, {}))
   },
 
   handlePassBomb: (socket, data) => {
