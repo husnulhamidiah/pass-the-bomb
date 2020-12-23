@@ -19,6 +19,9 @@ io.on('connection', socket => {
   socket.on(event.CLIENT_CREATE_GAME, data => handler.handleCreateGame(socket, data))
   socket.on(event.CLIENT_JOIN_GAME, data => handler.handleJoinGame(socket, data))
   socket.on(event.CLIENT_START_GAME, data => handler.handleStartGame(socket, data))
+
+  socket.on(event.CLIENT_GAME_TAP_BOMB, data => handler.handleTapBomb(socket, data))
+  socket.on(event.CLIENT_GAME_PASS_BOMB, data => handler.handlePassBomb(socket, data))
 })
 
 // start server
