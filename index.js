@@ -16,6 +16,8 @@ app.get('/dev/panel/', (req, res) => res.sendFile(path.join(__dirname, 'dev/test
 // setup socket server
 const io = socket(server)
 io.on('connection', socket => {
+  socket.on('ping', (data) => socket.emit('pong', data))
+
   socket.on(event.CLIENT_CREATE_GAME, data => handler.handleCreateGame(socket, data))
   socket.on(event.CLIENT_JOIN_GAME, data => handler.handleJoinGame(socket, data))
   socket.on(event.CLIENT_START_GAME, data => handler.handleStartGame(socket, data))
