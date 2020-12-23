@@ -7,6 +7,5 @@ export default {
 
   setRoom: (id, room) => {
     store[id] = room
-    // console.log(JSON.stringify(store))
   }
 }
