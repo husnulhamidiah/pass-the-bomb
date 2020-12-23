@@ -9,12 +9,11 @@
 <body>
     <ul id="events"></ul>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
     <script>
         const socket = io();
 
-        socket.connect('http://localhost:3000');
-
+        // helper funcs
         const logEvent = (name, content) => {
             const $events = document.getElementById('events');
 
@@ -28,9 +27,12 @@
             console.log({ timestamp: new Date(), name, content });
         };
 
-        socket.on('connect', () => {
-            logEvent("connect", {})
-        });
+        // handlers
+        socket.on('ping', (data) => { console.log("ping", data); });
+        socket.on('welcome', (data) => { console.log("welcome", data); });
+
+        socket.emit('ping')
+
     </script>
 </body>
 

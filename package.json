@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r esm index.js",
-    "start:panel": "serve testpanel",
     "dev": "npx nodemon --exec 'node -r esm index.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +21,7 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
+    "express": "^4.17.1",
     "socket.io": "^3.0.4"
   },
   "devDependencies": {
