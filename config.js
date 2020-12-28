@@ -1,0 +1,13 @@
+export const EVENT_UP_CREATE_GAME = 'up:game_create'
+export const EVENT_UP_JOIN_GAME = 'up:game_join'
+export const EVENT_UP_START_GAME = 'up:game_start'
+export const EVENT_UP_GAME_TAP_BOMB = 'up:game_bomb_tap'
+export const EVENT_UP_GAME_PASS_BOMB = 'up:game_bomb_pass'
+
+export const EVENT_DOWN_PLAYER_JOINED = 'down:player_joined'
+export const EVENT_DOWN_GAME_CREATED = 'down:game_created'
+export const EVENT_DOWN_GAME_START = 'down:game_start'
+export const EVENT_DOWN_GAME_END = 'down:game_end'
+export const EVENT_DOWN_GAME_TURN_START = 'down:game_turn_start'
+export const EVENT_DOWN_GAME_BOMB_TAP = 'down:game_bomb_tap'
+export const EVENT_DOWN_GAME_BOMB_PASS = 'down:game_bomb_pass'
