@@ -3,7 +3,8 @@ import * as config from './config'
 import store from './store'
 import memory from './memory'
 
-const genid = nanoid.customAlphabet('ABCEFGHJKLMNOPQRSTUWXYZ', 8)
+const genid = () => nanoid.customAlphabet('ABCEFGHJKLMNOPQRSTUWXYZ', 8)()
+const genusrid = () => nanoid.nanoid(40)
 
 export default {
   handleCreateGame: (socket, data) => {
@@ -21,7 +22,7 @@ export default {
     }
 
     // add current socket as player
-    const player = { id: genid(), isAdmin: true }
+    const player = { id: genusrid(), isAdmin: true }
     memory.sockets[player.id] = socket
     room.players.push(player)
 
@@ -42,7 +43,7 @@ export default {
     }
 
     // add current socket as player
-    const player = { id: genid() }
+    const player = { id: genusrid() }
     memory.sockets[player.id] = socket
     room.players.push(player)
 
