@@ -16,19 +16,35 @@
 <body>
     <div class="container my-5">
         <div class="row">
-            <div class="col-sm-2">
-                <div class="card my-1 bg-primary">
+            <div class="col-sm-4">
+                <div class="card my-3">
                     <h6 class="card-header">event tester</h6>
                     <div class="card-body">
-                        <a href="#" class="btn btn-block btn-light">Send cod</a>
+                        <textarea class="form-control mb-3" id="tb-event-body" rows="3"
+                            placeholder="write event json body here"></textarea>
+
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameCreate()">Send
+                            game_create</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameJoin()">Send game_join</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameStart()">Send game_start</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameBombTap()">Send
+                            game_bomb_tap</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameBombPass()">Send
+                            game_bomb_pass</a>
+                    </div>
+                </div>
+                <div class="card my-3">
+                    <h6 class="card-header">daily tips</h6>
+                    <div class="card-body">
+                        hard to navigate? yeah just fucking open console and play with publishEvent(name, data) func
                     </div>
                 </div>
             </div>
             <div class="col-sm">
-                <div class="card my-1">
+                <div class="card my-3">
                     <h6 class="card-header">received events</h6>
                     <div class="card-body">
-                        <textarea class="form-control" id="tb-received-event" rows="3"></textarea>
+                        <textarea class="form-control" id="tb-received-event" rows="25"></textarea>
                     </div>
                 </div>
             </div>
@@ -43,11 +59,13 @@
             const $eventbox = document.getElementById('tb-received-event');
 
             const eventstr = JSON.stringify({ timestamp: new Date(), name, content });
-            $eventbox.value = eventstr + '\n' + $eventbox.value
+            $eventbox.value = eventstr + '\n-----\n' + $eventbox.value
         };
 
-        const publishEvent = (name, content) => {
-            console.log({ timestamp: new Date(), name, content });
+        const publishEvent = (name, data) => {
+            socket.emit(name, data)
+            console.log(name, data);
+            // logEvent('UP!' + name, data)
         };
 
         // debugger
@@ -61,11 +79,17 @@
 
         socket.on("*", function (event, data) {
             console.log(event, data);
-            logEvent(event, data)
+            logEvent('DOWN!' + event, data)
         });
 
         // emitter
-        socket.emit('ping')
+        const $eventbodybox = document.getElementById('tb-event-body');
+
+        function emitGameCreate() { publishEvent('up:game_create', JSON.parse($eventbodybox.value || '{}')) }
+        function emitGameJoin() { publishEvent('up:game_join', JSON.parse($eventbodybox.value || '{}')) }
+        function emitGameStart() { publishEvent('up:game_start', JSON.parse($eventbodybox.value || '{}')) }
+        function emitGameBombTap() { publishEvent('up:game_bomb_tap', JSON.parse($eventbodybox.value || '{}')) }
+        function emitGameBombPass() { publishEvent('up:game_bomb_pass', JSON.parse($eventbodybox.value || '{}')) }
 
     </script>
 </body>
