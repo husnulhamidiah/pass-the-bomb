@@ -20,7 +20,7 @@
                 <div class="card my-3">
                     <h7 class="card-header">screen :: home</h7>
                     <div class="card-body">
-                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameCreate()">Create Game</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="handleJoinGame()">Create Game</a>
                         <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameJoin()">Join Game</a>
                     </div>
                 </div>
@@ -43,21 +43,27 @@
         <script>
             const socket = io();
 
+            const EVENT_UP_CREATE_GAME = 'up:game_create'
+            const EVENT_UP_JOIN_GAME = 'up:game_join'
+            const EVENT_UP_START_GAME = 'up:game_start'
+            const EVENT_UP_GAME_TAP_BOMB = 'up:game_bomb_tap'
+            const EVENT_UP_GAME_PASS_BOMB = 'up:game_bomb_pass'
+            const EVENT_DOWN_PLAYER_JOINED = 'down:player_joined'
+            const EVENT_DOWN_GAME_CREATED = 'down:game_created'
+            const EVENT_DOWN_GAME_START = 'down:game_start'
+            const EVENT_DOWN_GAME_END = 'down:game_end'
+            const EVENT_DOWN_GAME_TURN_START = 'down:game_turn_start'
+            const EVENT_DOWN_GAME_BOMB_TAP = 'down:game_bomb_tap'
+            const EVENT_DOWN_GAME_BOMB_PASS = 'down:game_bomb_pass'
+
             // gamestates
             const gamestates = {
-                gameid: '',
+                roomid: '',
                 playerid: '',
                 isAdmin: '',
             }
 
-            // helper funcs
-            const publishEvent = (name, data) => {
-                socket.emit(name, data)
-                console.log(name, data);
-                // logEvent('UP!' + name, data)
-            };
-
-            // debugger
+            // aio handler
             var onevent = socket.onevent;
             socket.onevent = function (packet) {
                 var args = packet.data || [];
@@ -66,19 +72,49 @@
                 onevent.call(this, packet);      // additional call to catch-all
             };
 
+            var subscribers = {} // map string to []function
             socket.on("*", function (event, data) {
+                // debugger
                 console.log(event, data);
+
+                // run event waiters
+                if (subscribers[event] && subscribers[event].length >= 1) {
+                    const removables = []
+
+                    // run fxs
+                    subscribers[event].forEach((fx, i) => {
+                        const isRemovable = fx(data)
+                        if (isRemovable) removables.push(i)
+                    });
+
+                    // remove removable fxs
+                    subscribers[event] = subscribers[event].filter((v, i) => {
+                        return removables.indexOf(i) == -1
+                    })
+                }
             });
 
+            // helper funcs
+            const publishEvent = (name, data) => {
+                socket.emit(name, data)
+                console.log(name, data);
+            };
+
+            const subscribeEvent = (name, callback) => {
+                if (!subscribers[name]) subscribers[name] = []
+                subscribers[name].push(callback)
+            };
 
             // handlers
-            const $eventbodybox = document.getElementById('tb-event-body');
-
-            function emitGameCreate() { publishEvent('up:game_create', JSON.parse($eventbodybox.value || '{}')) }
-            function emitGameJoin() { publishEvent('up:game_join', JSON.parse($eventbodybox.value || '{}')) }
-            function emitGameStart() { publishEvent('up:game_start', JSON.parse($eventbodybox.value || '{}')) }
-            function emitGameBombTap() { publishEvent('up:game_bomb_tap', JSON.parse($eventbodybox.value || '{}')) }
-            function emitGameBombPass() { publishEvent('up:game_bomb_pass', JSON.parse($eventbodybox.value || '{}')) }
+            function handleJoinGame() {
+                publishEvent(EVENT_UP_CREATE_GAME, {})
+                subscribeEvent(EVENT_DOWN_GAME_CREATED, (data) => {
+                    gamestates.roomid = data.roomid
+                    gamestates.playerid = data.player.id
+                    gamestates.isAdmin = data.player.isAdmin
+                    return true
+                })
+            }
 
         </script>
 </body>
