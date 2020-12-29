@@ -10,7 +10,7 @@ import * as config from './config'
 const app = express()
 const server = http.createServer(app)
 
-app.get('/', (req, res) => res.json({ msg: 'hello world' }))
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'dev/mockup.html')))
 app.get('/dev/panel/', (req, res) => res.sendFile(path.join(__dirname, 'dev/panel.html')))
 
 // setup socket server
