@@ -20,13 +20,23 @@
                 <div class="card my-3">
                     <h7 class="card-header">screen :: home</h7>
                     <div class="card-body">
-                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="handleJoinGame()">Create Game</a>
-                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameJoin()">Join Game</a>
+                        <input type="text" class="form-control mb-3" id="tb-home-roomid"
+                            placeholder="insert gameroom id">
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="handleJoinGame()">Join Game</a>
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="handleCreateGame()">Create Game</a>
                     </div>
                 </div>
                 <div class="card my-3">
                     <h7 class="card-header">screen :: game</h7>
                     <div class="card-body">
+                        <input type="text" class="form-control mb-1" id="tb-game-roomid" placeholder="gameroom id"
+                            disabled>
+                        <textarea class="form-control mb-3" id="tb-game-players" rows="3" disabled
+                            placeholder="joined players"></textarea>
+                        <textarea class="form-control mb-3" id="tb-game-log" rows="10" disabled
+                            placeholder="game logs"></textarea>
+
+                        <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameCreate()">Start</a>
                         <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameCreate()">Tap</a>
                         <a href="#" class="btn btn-block btn-primary mb-1" onclick="emitGameJoin()">Pass</a>
                     </div>
@@ -95,6 +105,10 @@
             });
 
             // helper funcs
+            var genid = function () {
+                return '_' + Math.random().toString(36).substr(2, 9);
+            };
+
             const publishEvent = (name, data) => {
                 socket.emit(name, data)
                 console.log(name, data);
@@ -106,12 +120,53 @@
             };
 
             // handlers
-            function handleJoinGame() {
-                publishEvent(EVENT_UP_CREATE_GAME, {})
+            function handleCreateGame() {
+                if (gamestates.roomid) return
+
+                const gameidbox = document.getElementById('tb-game-roomid');
+                const playersbox = document.getElementById('tb-game-players');
+
+                publishEvent(EVENT_UP_CREATE_GAME, { cid: genid() })
+
                 subscribeEvent(EVENT_DOWN_GAME_CREATED, (data) => {
                     gamestates.roomid = data.roomid
                     gamestates.playerid = data.player.id
                     gamestates.isAdmin = data.player.isAdmin
+
+                    gameidbox.value = data.roomid
+                    playersbox.value = data.player.id + '\n' + playersbox.value
+
+                    subscribeEvent(EVENT_DOWN_PLAYER_JOINED, (data) => {
+                        playersbox.value = data.players.map(e => e.id).join('\n')
+                    })
+
+                    return true
+                })
+            }
+
+            function handleJoinGame() {
+                if (gamestates.roomid) return
+
+                const cid = genid()
+                const idbox = document.getElementById('tb-home-roomid');
+                const gameidbox = document.getElementById('tb-game-roomid');
+                const playersbox = document.getElementById('tb-game-players');
+
+                const gameroomid = idbox.value
+                publishEvent(EVENT_UP_JOIN_GAME, { cid, roomid: gameroomid })
+                subscribeEvent(EVENT_DOWN_PLAYER_JOINED, (data) => {
+                    if (data.cid != cid) return
+
+                    gamestates.roomid = gameroomid
+                    gamestates.playerid = data.player.id
+
+                    gameidbox.value = gameroomid
+                    playersbox.value = data.players.map(e => e.id).join('\n')
+
+                    subscribeEvent(EVENT_DOWN_PLAYER_JOINED, (data) => {
+                        playersbox.value = data.players.map(e => e.id).join('\n')
+                    })
+
                     return true
                 })
             }
