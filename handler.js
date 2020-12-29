@@ -4,11 +4,11 @@ import store from './store'
 import memory from './memory'
 
 const genid = () => nanoid.customAlphabet('ABCEFGHJKLMNOPQRSTUWXYZ', 8)()
-const genusrid = () => nanoid.nanoid(40)
+const genusrid = () => nanoid.customAlphabet('ABCEFGHJKLMNOPQRSTUWXYZ', 16)()
 
 export default {
   handleCreateGame: (socket, data) => {
-    // const { } = data
+    const { cid } = data
 
     // generate things
     const id = genid()
@@ -30,11 +30,11 @@ export default {
     store.setRoom(id, room)
 
     // send response evt
-    socket.emit(config.EVENT_DOWN_GAME_CREATED, { roomid: room.id, player: player })
+    socket.emit(config.EVENT_DOWN_GAME_CREATED, { cid: cid, roomid: room.id, player: player })
   },
 
   handleJoinGame: (socket, data) => {
-    const { roomid } = data
+    const { cid, roomid } = data
 
     // find room
     const room = store.getRoom(roomid)
@@ -53,11 +53,11 @@ export default {
     // send response evt
     room.players
       .map(p => memory.sockets[p.id])
-      .forEach(sock => sock.emit(config.EVENT_DOWN_PLAYER_JOINED, { player: player }))
+      .forEach(sock => sock.emit(config.EVENT_DOWN_PLAYER_JOINED, { cid: cid, player: player, players: room.players }))
   },
 
   handleStartGame: (socket, data) => {
-    const { playerid, roomid } = data
+    const { cid, playerid, roomid } = data
 
     // confirm socket
     if (socket !== memory.sockets[playerid]) {
@@ -89,16 +89,16 @@ export default {
     // send response evt
     room.players
       .map(p => memory.sockets[p.id])
-      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_START, {}))
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_START, { cid: cid }))
 
     const playerinturn = [room.players[room.curplayer]]
     playerinturn
       .map(p => memory.sockets[p.id])
-      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_TURN_START, {}))
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_TURN_START, { cid: cid }))
   },
 
   handleTapBomb: (socket, data) => {
-    const { playerid, roomid } = data
+    const { cid, playerid, roomid } = data
 
     // confirm socket
     if (socket !== memory.sockets[playerid]) {
@@ -137,17 +137,17 @@ export default {
     // send response evt
     room.players
       .map(p => memory.sockets[p.id])
-      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_TAP, {}))
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_TAP, { cid: cid }))
 
     if (exploded) {
       room.players
         .map(p => memory.sockets[p.id])
-        .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_END, {})) // TODO: send score update
+        .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_END, { cid: cid })) // TODO: send score update
     }
   },
 
   handlePassBomb: (socket, data) => {
-    const { playerid, roomid } = data
+    const { cid, playerid, roomid } = data
 
     // confirm socket
     if (socket !== memory.sockets[playerid]) {
@@ -181,8 +181,8 @@ export default {
     // send response evt
     room.players
       .map(p => memory.sockets[p.id])
-      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_PASS, {}))
-    memory.sockets[nextplayer.id].emit(config.EVENT_DOWN_GAME_TURN_START, {})
+      .forEach(sock => sock.emit(config.EVENT_DOWN_GAME_BOMB_PASS, { cid: cid }))
+    memory.sockets[nextplayer.id].emit(config.EVENT_DOWN_GAME_TURN_START, { cid: cid })
   }
 
 }
